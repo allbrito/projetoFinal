@@ -1,4 +1,4 @@
-public class ContaCorrente extends Conta implements Emprestimo{
+public class ContaCorrente extends Conta {
 
     private int limitador;
 
@@ -15,7 +15,6 @@ public class ContaCorrente extends Conta implements Emprestimo{
         return true;
     }
 
-    @Override
     public boolean pedirEmprestimo(double valor) {
         if (valor > getSaldo() + (getSaldo()*0.35) || limitador > 2) {
             return false;

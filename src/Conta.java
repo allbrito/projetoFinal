@@ -1,6 +1,7 @@
 import java.util.Random;
 
 public abstract class Conta implements IAutenticacao{
+	
     private int numero;
     private double saldo;
     private int senha;
