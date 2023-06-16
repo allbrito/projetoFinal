@@ -81,4 +81,13 @@ public abstract class Conta implements IAutenticacao{
     public Cliente getCliente() {
         return cliente;
     }
+
+    public void setNumero(int numero) {
+    }
+
+    public void setSaldo(double saldo) {
+    }
+
+    public void setSenha(int senha) {
+    }
 }
