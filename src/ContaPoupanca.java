@@ -1,5 +1,4 @@
 public class ContaPoupanca extends Conta {
-
     private final double taxaSaque = 0.05;
 
     public ContaPoupanca(String nome, String cpf) {
@@ -8,7 +7,8 @@ public class ContaPoupanca extends Conta {
 
     @Override
     public boolean sacar(double valor) {
-        valor += valor*taxaSaque;
-        return super.sacar(valor);
+        double valorComTaxa = valor + (valor * taxaSaque);
+        return super.sacar(valorComTaxa);
     }
 }
+

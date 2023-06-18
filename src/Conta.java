@@ -1,7 +1,7 @@
 import java.util.Random;
 
-public abstract class Conta implements IAutenticacao{
-	
+public abstract class Conta implements IAutenticacao {
+
     private int numero;
     private double saldo;
     private int senha;
@@ -17,7 +17,7 @@ public abstract class Conta implements IAutenticacao{
 
     public boolean sacar(double valor) {
         if (this.saldo < valor) {
-            System.out.println("nao tem");
+            System.out.println("Saldo insuficiente");
             return false;
         }
         this.saldo -= valor;
@@ -26,7 +26,7 @@ public abstract class Conta implements IAutenticacao{
 
     public boolean depositar(double valor) {
         if (valor < 0) {
-            System.out.println("nao pode");
+            System.out.println("Valor inválido");
             return false;
         }
         this.saldo += valor;
@@ -35,7 +35,7 @@ public abstract class Conta implements IAutenticacao{
 
     @Override
     public boolean autenticar(String login, int senha) {
-        if (this.getCliente().getCpf() != login || this.getSenha() != senha) {
+        if (!this.getCliente().getCpf().equals(login) || this.getSenha() != senha) {
             return false;
         }
         return true;
@@ -43,12 +43,13 @@ public abstract class Conta implements IAutenticacao{
 
     @Override
     public boolean alterarSenha(int senha, int novaSenha) {
-        if (this.senha != senha){
+        if (this.senha != senha) {
             return false;
         }
-        this.senha = senha;
+        this.senha = novaSenha;
         return true;
     }
+
 
     @Override
     public String toString() {
@@ -63,7 +64,7 @@ public abstract class Conta implements IAutenticacao{
     }
 
     private int gerarSenha() {
-        return gerador.nextInt(999, 10000);
+        return gerador.nextInt(1000, 10000);
     }
 
     public int getNumero() {
@@ -83,11 +84,14 @@ public abstract class Conta implements IAutenticacao{
     }
 
     public void setNumero(int numero) {
+        this.numero = numero;
     }
 
     public void setSaldo(double saldo) {
+        this.saldo = saldo;
     }
 
     public void setSenha(int senha) {
+        this.senha = senha;
     }
 }

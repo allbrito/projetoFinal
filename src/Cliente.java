@@ -1,5 +1,4 @@
 public class Cliente {
-	
     private String nome;
     private String cpf;
 
@@ -10,8 +9,8 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Nome: " + nome+
-                ", CPF : "+ cpf;
+        return "Nome: " + nome +
+                ", CPF: " + cpf;
     }
 
     public String getCpf() {
