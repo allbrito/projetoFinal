@@ -99,8 +99,10 @@ public class Main {
             System.out.println("3. Trocar senha");
             if (conta instanceof ContaCorrente) {
                 System.out.println("4. Solicitar empréstimo");
+            } else if (conta instanceof ContaPoupanca) {
+                System.out.println("4. Ver dados da conta");
             }
-            System.out.println("5. Ver dados da conta");
+            System.out.println("5. Transferência");
             System.out.println("6. Voltar ao menu principal");
             System.out.print("Opção: ");
             opcao = sc.nextInt();
@@ -119,12 +121,14 @@ public class Main {
                 case 4:
                     if (conta instanceof ContaCorrente) {
                         solicitarEmprestimo((ContaCorrente) conta);
+                    } else if (conta instanceof ContaPoupanca) {
+                        exibirDadosConta(conta);
                     } else {
                         System.out.println("Opção inválida.");
                     }
                     break;
                 case 5:
-                    exibirDadosConta(conta);
+                    transferencia(conta);
                     break;
                 case 6:
                     System.out.println("Voltando ao menu principal...");
@@ -190,7 +194,29 @@ public class Main {
         }
     }
 
+    private static void transferencia(Conta contaOrigem) {
+        System.out.print("Digite o CPF da conta de destino: ");
+        String cpfDestino = sc.nextLine();
 
+        Conta contaDestino = dbConnect.buscarPorCpf(cpfDestino);
+
+        if (contaDestino == null) {
+            System.out.println("Conta de destino inválida.");
+            return;
+        }
+
+        System.out.print("Digite o valor a ser transferido: ");
+        double valor = sc.nextDouble();
+        sc.nextLine();
+
+        if (contaOrigem.transferir(contaDestino, valor)) {
+            dbConnect.atualizar(contaOrigem);
+            dbConnect.atualizar(contaDestino);
+            System.out.println("Transferência realizada com sucesso.");
+        } else {
+            System.out.println("Saldo insuficiente para transferência.");
+        }
+    }
 
     private static void exibirDadosConta(Conta conta) {
         System.out.println("\n------ Dados da Conta ------");

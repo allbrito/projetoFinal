@@ -33,6 +33,18 @@ public abstract class Conta implements IAutenticacao {
         return true;
     }
 
+    public boolean transferir(Conta destino, double valor) {
+        if (destino == null) {
+            System.out.println("Conta de destino inválida.");
+            return false;
+        }
+        if (this.sacar(valor)) {
+            destino.depositar(valor);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean autenticar(String login, int senha) {
         if (!this.getCliente().getCpf().equals(login) || this.getSenha() != senha) {
