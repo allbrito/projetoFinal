@@ -1,5 +1,6 @@
 public class ContaCorrente extends Conta {
     private int limitador;
+    private final byte identificador = 1;
 
     public ContaCorrente(String nome, String cpf) {
         super(nome, cpf);
@@ -25,5 +26,9 @@ public class ContaCorrente extends Conta {
         depositar(valor);
         limitador++;
         return true;
+    }
+
+    public final byte getIdentificador(){
+        return identificador;
     }
 }
