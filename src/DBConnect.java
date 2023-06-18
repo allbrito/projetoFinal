@@ -1,6 +1,4 @@
 import java.sql.*;
-import java.util.ArrayList;
-//import java.util.List;
 
 public class DBConnect {
     private static final String URL = "jdbc:mysql://localhost/proj_virtubank";
@@ -12,16 +10,16 @@ public class DBConnect {
             String sql = "INSERT INTO conta (numero, saldo, senha, cliente_nome, cliente_cpf, tipo_conta) VALUES (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, conta.getNumero());
-            statement.setDouble(2, conta.getSaldo());
-            statement.setInt(3, conta.getSenha());
-            statement.setString(4, conta.getCliente().getNome());
-            statement.setString(5, conta.getCliente().getCpf());
-            statement.setString(6, conta.getClass().getSimpleName());
+                statement.setInt(1, conta.getNumero());
+                statement.setDouble(2, conta.getSaldo());
+                statement.setInt(3, conta.getSenha());
+                 statement.setString(4, conta.getCliente().getNome());
+                statement.setString(5, conta.getCliente().getCpf());
+                statement.setString(6, conta.getClass().getSimpleName());
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+                e.printStackTrace();
         }
     }
 
@@ -41,11 +39,12 @@ public class DBConnect {
                 String clienteCpf = resultSet.getString("cliente_cpf");
                 String tipoConta = resultSet.getString("tipo_conta");
 
-                if (tipoConta.equals("ContaCorrente")) {
+                    if (tipoConta.equals("ContaCorrente")) {
                     conta = new ContaCorrente(clienteNome, clienteCpf);
-                } else if (tipoConta.equals("ContaPoupanca")) {
-                    conta = new ContaPoupanca(clienteNome, clienteCpf);
-                }
+                    }
+                    else if (tipoConta.equals("ContaPoupanca")) {
+                        conta = new ContaPoupanca(clienteNome, clienteCpf);
+                    }
 
                 conta.setNumero(resultSet.getInt("numero"));
                 conta.setSaldo(resultSet.getDouble("saldo"));
@@ -59,13 +58,13 @@ public class DBConnect {
     }
 
     public void atualizar(Conta conta) {
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "UPDATE conta SET saldo = ?, senha = ? WHERE numero = ?";
+            try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+                String sql = "UPDATE conta SET saldo = ?, senha = ? WHERE numero = ?";
 
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setDouble(1, conta.getSaldo());
-            statement.setInt(2, conta.getSenha());
-            statement.setInt(3, conta.getNumero());
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setDouble(1, conta.getSaldo());
+                statement.setInt(2, conta.getSenha());
+                statement.setInt(3, conta.getNumero());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -73,42 +72,6 @@ public class DBConnect {
         }
     }
 
-
-
-    /*public List<Conta> listarContas() {
-        List<Conta> contas = new ArrayList<>();
-
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "SELECT * FROM conta";
-
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String clienteNome = resultSet.getString("cliente_nome");
-                String clienteCpf = resultSet.getString("cliente_cpf");
-                String tipoConta = resultSet.getString("tipo_conta");
-
-                Conta conta = null;
-
-                if (tipoConta.equals("ContaCorrente")) {
-                    conta = new ContaCorrente(clienteNome, clienteCpf);
-                } else if (tipoConta.equals("ContaPoupanca")) {
-                    conta = new ContaPoupanca(clienteNome, clienteCpf);
-                }
-
-                conta.setNumero(resultSet.getInt("numero"));
-                conta.setSaldo(resultSet.getDouble("saldo"));
-                conta.setSenha(resultSet.getInt("senha"));
-
-                contas.add(conta);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return contas;
-    }*/
 
     public Conta buscarPorCpf(String cpf) {
         Conta conta = null;
@@ -121,21 +84,23 @@ public class DBConnect {
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                String clienteNome = resultSet.getString("cliente_nome");
-                String clienteCpf = resultSet.getString("cliente_cpf");
-                String tipoConta = resultSet.getString("tipo_conta");
+                if (resultSet.next()) {
+                    String clienteNome = resultSet.getString("cliente_nome");
+                    String clienteCpf = resultSet.getString("cliente_cpf");
+                    String tipoConta = resultSet.getString("tipo_conta");
 
-                if (tipoConta.equals("ContaCorrente")) {
-                    conta = new ContaCorrente(clienteNome, clienteCpf);
-                } else if (tipoConta.equals("ContaPoupanca")) {
-                    conta = new ContaPoupanca(clienteNome, clienteCpf);
+                        if (tipoConta.equals("ContaCorrente")) {
+                            conta = new ContaCorrente(clienteNome, clienteCpf);
+                        }
+
+                        else if (tipoConta.equals("ContaPoupanca")) {
+                            conta = new ContaPoupanca(clienteNome, clienteCpf);
+                        }
+
+                    conta.setNumero(resultSet.getInt("numero"));
+                    conta.setSaldo(resultSet.getDouble("saldo"));
+                    conta.setSenha(resultSet.getInt("senha"));
                 }
-
-                conta.setNumero(resultSet.getInt("numero"));
-                conta.setSaldo(resultSet.getDouble("saldo"));
-                conta.setSenha(resultSet.getInt("senha"));
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

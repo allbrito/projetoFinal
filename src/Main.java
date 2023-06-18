@@ -97,11 +97,14 @@ public class Main {
             System.out.println("1. Depositar");
             System.out.println("2. Sacar");
             System.out.println("3. Trocar senha");
-            System.out.println("4. Ver dados da conta");
-            System.out.println("5. Voltar ao menu principal");
+            if (conta instanceof ContaCorrente) {
+                System.out.println("4. Solicitar empréstimo");
+            }
+            System.out.println("5. Ver dados da conta");
+            System.out.println("6. Voltar ao menu principal");
             System.out.print("Opção: ");
             opcao = sc.nextInt();
-            sc.nextLine(); // Limpar o buffer do scanner
+            sc.nextLine();
 
             switch (opcao) {
                 case 1:
@@ -114,33 +117,42 @@ public class Main {
                     trocarSenha(conta);
                     break;
                 case 4:
-                    exibirDadosConta(conta);
+                    if (conta instanceof ContaCorrente) {
+                        solicitarEmprestimo((ContaCorrente) conta);
+                    } else {
+                        System.out.println("Opção inválida.");
+                    }
                     break;
                 case 5:
+                    exibirDadosConta(conta);
+                    break;
+                case 6:
                     System.out.println("Voltando ao menu principal...");
                     break;
                 default:
                     System.out.println("Opção inválida.");
                     break;
             }
-        } while (opcao != 5);
+        } while (opcao != 6);
     }
 
     private static void depositar(Conta conta) {
         System.out.print("Digite o valor a ser depositado: ");
         double valor = sc.nextDouble();
-        sc.nextLine(); // Limpar o buffer do scanner
+        sc.nextLine();
 
         conta.depositar(valor);
-        System.out.println("Depósito realizado, Novo saldo: " + conta.getSaldo());
+        dbConnect.atualizar(conta);
+        System.out.println("Depósito realizado. Novo saldo: " + conta.getSaldo());
     }
 
     private static void sacar(Conta conta) {
         System.out.print("Digite o valor a ser sacado: ");
         double valor = sc.nextDouble();
-        sc.nextLine(); // Limpar o buffer do scanner
+        sc.nextLine();
 
         if (conta.sacar(valor)) {
+            dbConnect.atualizar(conta);
             System.out.println("Saque realizado. Novo saldo: " + conta.getSaldo());
         } else {
             System.out.println("Tente um valor menor");
@@ -150,10 +162,10 @@ public class Main {
     private static void trocarSenha(Conta conta) {
         System.out.print("Digite a senha atual: ");
         int senhaAtual = sc.nextInt();
-        sc.nextLine(); // Limpar o buffer do scanner
+        sc.nextLine();
 
         if (conta.autenticar(conta.getCliente().getCpf(), senhaAtual)) {
-            System.out.print("Digite sua nova senha: ");
+            System.out.print("Digite a nova senha: ");
             int novaSenha = sc.nextInt();
             sc.nextLine();
 
@@ -164,6 +176,21 @@ public class Main {
             System.out.println("Senha atual inválida.");
         }
     }
+
+    private static void solicitarEmprestimo(ContaCorrente contaCorrente) {
+        System.out.print("Digite o valor do empréstimo: ");
+        double valor = sc.nextDouble();
+        sc.nextLine();
+
+        if (contaCorrente.pedirEmprestimo(valor)) {
+            dbConnect.atualizar(contaCorrente);
+            System.out.println("Empréstimo aprovado. Novo saldo: " + contaCorrente.getSaldo());
+        } else {
+            System.out.println("Empréstimo não aprovado.");
+        }
+    }
+
+
 
     private static void exibirDadosConta(Conta conta) {
         System.out.println("\n------ Dados da Conta ------");
