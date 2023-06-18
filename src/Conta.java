@@ -54,7 +54,7 @@ public abstract class Conta implements IAutenticacao {
     @Override
     public String toString() {
         return "Titular: " + getCliente().getNome() +
-                ", Tipo: " + getClass().getName() +
+                ", Tipo: " + getClass().getSimpleName()+
                 ", Numero = " + getNumero() +
                 ", Saldo = " + getSaldo();
     }
