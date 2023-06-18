@@ -6,7 +6,6 @@ public class Main {
 
     private static DBConnect dbConnect = new DBConnect();
     private static Scanner sc = new Scanner(System.in);
-
     public static List<ContaCorrente> listCorrente = new ArrayList<>();
     public static List<ContaPoupanca> listPoupanca = new ArrayList<>();
 
