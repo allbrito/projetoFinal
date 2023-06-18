@@ -1,24 +1,30 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
     private static DBConnect dbConnect = new DBConnect();
     private static Scanner sc = new Scanner(System.in);
+
+    public static List<ContaCorrente> listCorrente = new ArrayList<>();
+    public static List<ContaPoupanca> listPoupanca = new ArrayList<>();
 
     public static void main(String[] args) {
         exibirMenu();
     }
 
-    private static void exibirMenu() {
+    private static void exibirMenu(){
         int opcao;
 
         do {
-            System.out.println("------ Menu ------");
-            System.out.println("1. Criar conta");
-            System.out.println("2. Acessar conta existente");
+            System.out.println("------ Menu da Conta ------");
+            System.out.println("1. Criar Conta");
+            System.out.println("2. Acessar Conta");
             System.out.println("3. Sair");
-            System.out.print("Opção: ");
+            System.out.println("Opcao");
             opcao = sc.nextInt();
-            sc.nextLine(); // Limpar o buffer do scanner
+            sc.nextLine();
 
             switch (opcao) {
                 case 1:
@@ -34,6 +40,7 @@ public class Main {
                     System.out.println("Opção inválida.");
                     break;
             }
+
         } while (opcao != 3);
     }
 
@@ -51,20 +58,21 @@ public class Main {
         int opcao = sc.nextInt();
         sc.nextLine(); // Limpar o buffer do scanner
 
-        Conta conta;
-
         if (opcao == 1) {
-            conta = new ContaCorrente(nome, cpf);
+            var contaCorrente = new ContaCorrente(nome, cpf);
+            listCorrente.add(contaCorrente);
+            System.out.println("Sua senha: " + contaCorrente.getSenha());
+            System.out.println("Seu número da conta: " + contaCorrente.getNumero());
+            dbConnect.salvar(contaCorrente);
         } else if (opcao == 2) {
-            conta = new ContaPoupanca(nome, cpf);
+            var contaPoupanca = new ContaPoupanca(nome, cpf);
+            listPoupanca.add(contaPoupanca);
+            System.out.println("Sua senha: " + contaPoupanca.getSenha());
+            System.out.println("Seu número da conta: " + contaPoupanca.getNumero());
+            dbConnect.salvar(contaPoupanca);
         } else {
-            System.out.println("Opção inválida.");
-            return;
+            System.out.println("Opcao Inválida");
         }
-
-        int senha = conta.getSenha();
-        dbConnect.salvar(conta);
-        System.out.println("Conta criada com sucesso. A senha da conta é: " + senha);
     }
 
     private static void acessarConta() {
@@ -73,27 +81,74 @@ public class Main {
 
         System.out.print("Digite a senha: ");
         int senha = sc.nextInt();
+
         sc.nextLine(); // Limpar o buffer do scanner
 
         Conta conta = dbConnect.buscarPorCpf(cpf);
 
-        if (conta != null && conta.autenticar(cpf, senha)) {
-            exibirMenuConta(conta);
-        } else {
-            System.out.println("CPF ou senha inválidos.");
+        for (ContaCorrente cc: listCorrente) {
+            if (cc.autenticar(cpf, senha) && conta != null) {
+                exibirMenuCorrente(cc);
+                return;
+            }
         }
+
+        for (ContaPoupanca cp: listPoupanca) {
+            if (cp.autenticar(cpf, senha) && conta != null) {
+                exibirMenuPoupanca(cp);
+                return;
+            }
+        }
+        System.out.println("Cpf ou Senha inválidos");
     }
 
-    private static void exibirMenuConta(Conta conta) {
+    private static void exibirMenuCorrente(ContaCorrente contaCorrente) {
         int opcao;
-
         do {
-            System.out.println("\n------ Menu da Conta ------");
-            System.out.println("Titular: " + conta.getCliente().getNome());
-            System.out.println("Tipo: " + conta.getClass().getSimpleName());
-            System.out.println("Número: " + conta.getNumero());
-            System.out.println("Saldo: " + conta.getSaldo());
-            System.out.println("-----------------------------");
+            System.out.println("------ Menu da Conta ------");
+            System.out.println("1. Depositar");
+            System.out.println("2. Sacar");
+            System.out.println("3. Transferir");
+            System.out.println("4. Pedir Empréstimo");
+            System.out.println("5. Trocar Senha");
+            System.out.println("6. Ver Dados da Conta");
+            System.out.println("7. Voltar ao menu principal");
+            System.out.print("Opção: ");
+            opcao = sc.nextInt();
+
+            sc.nextLine(); // Limpar o buffer do scanner
+
+            switch (opcao) {
+                case 1:
+                    depositar(contaCorrente);
+                    break;
+                case 2:
+                    sacar(contaCorrente);
+                    break;
+                case 3:
+                    transferir(contaCorrente);
+                case 4:
+                    emprestimo(contaCorrente);
+                case 5:
+                    trocarSenha(contaCorrente);
+                    break;
+                case 6:
+                    contaCorrente.toString();
+                    break;
+                case 7:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+                    break;
+            }
+        } while (opcao != 7);
+    }
+
+    private static void exibirMenuPoupanca(ContaPoupanca contaPoupanca) {
+        int opcao;
+        do {
+            System.out.println("------ Menu da Conta ------");
             System.out.println("1. Depositar");
             System.out.println("2. Sacar");
             System.out.println("3. Trocar senha");
@@ -101,20 +156,21 @@ public class Main {
             System.out.println("5. Voltar ao menu principal");
             System.out.print("Opção: ");
             opcao = sc.nextInt();
+
             sc.nextLine(); // Limpar o buffer do scanner
 
             switch (opcao) {
                 case 1:
-                    depositar(conta);
+                    depositar(contaPoupanca);
                     break;
                 case 2:
-                    sacar(conta);
+                    sacar(contaPoupanca);
                     break;
                 case 3:
-                    trocarSenha(conta);
+                    trocarSenha(contaPoupanca);
                     break;
                 case 4:
-                    exibirDadosConta(conta);
+                    contaPoupanca.toString();
                     break;
                 case 5:
                     System.out.println("Voltando ao menu principal...");
@@ -129,6 +185,7 @@ public class Main {
     private static void depositar(Conta conta) {
         System.out.print("Digite o valor a ser depositado: ");
         double valor = sc.nextDouble();
+
         sc.nextLine(); // Limpar o buffer do scanner
 
         conta.depositar(valor);
@@ -138,6 +195,7 @@ public class Main {
     private static void sacar(Conta conta) {
         System.out.print("Digite o valor a ser sacado: ");
         double valor = sc.nextDouble();
+
         sc.nextLine(); // Limpar o buffer do scanner
 
         if (conta.sacar(valor)) {
@@ -147,9 +205,34 @@ public class Main {
         }
     }
 
+    private static void transferir(ContaCorrente contaCorrente) {
+        System.out.println("Digite o valor a transferir: ");
+        int valor = sc.nextInt();
+
+        System.out.println("Digite o número da conta destino: ");
+        int numero = sc.nextInt();
+
+        for (ContaCorrente cc: listCorrente) {
+            if (cc.getNumero() == numero) {
+                if (contaCorrente.transferir(cc, valor)) {
+                    System.out.println("Ocorreu tudo bem");
+                }
+            } else {
+                System.out.println("Não foi possível fazer a transferência");
+            }
+        }
+    }
+
+    private static void emprestimo(ContaCorrente contaCorrente) {
+        System.out.print("Insira o valor do empréstimo: ");
+        double valor = sc.nextDouble();
+        contaCorrente.pedirEmprestimo(valor);
+    }
+
     private static void trocarSenha(Conta conta) {
         System.out.print("Digite a senha atual: ");
         int senhaAtual = sc.nextInt();
+
         sc.nextLine(); // Limpar o buffer do scanner
 
         if (conta.autenticar(conta.getCliente().getCpf(), senhaAtual)) {
@@ -163,14 +246,5 @@ public class Main {
         } else {
             System.out.println("Senha atual inválida.");
         }
-    }
-
-    private static void exibirDadosConta(Conta conta) {
-        System.out.println("\n------ Dados da Conta ------");
-        System.out.println("Titular: " + conta.getCliente().getNome());
-        System.out.println("Tipo: " + conta.getClass().getSimpleName());
-        System.out.println("Número: " + conta.getNumero());
-        System.out.println("Saldo: " + conta.getSaldo());
-        System.out.println("----------------------------");
     }
 }
