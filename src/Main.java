@@ -18,7 +18,7 @@ public class Main {
             System.out.println("3. Sair");
             System.out.print("Opção: ");
             opcao = sc.nextInt();
-            sc.nextLine(); // Limpar o buffer do scanner
+            sc.nextLine();
 
             switch (opcao) {
                 case 1:
@@ -49,7 +49,7 @@ public class Main {
         System.out.println("2. Conta Poupança");
         System.out.print("Opção: ");
         int opcao = sc.nextInt();
-        sc.nextLine(); // Limpar o buffer do scanner
+        sc.nextLine();
 
         Conta conta;
 
